@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\formLoginStore;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
@@ -12,6 +13,7 @@ class LoginController extends Controller
    */
   public function index()
   {
+
     return view('login', [
       'title' => 'Login'
     ]);
@@ -30,7 +32,14 @@ class LoginController extends Controller
    */
   public function store(formLoginStore $request)
   {
-    dd($request->safe()->only(['email', 'password']));
+
+    if (Auth::attempt($request->safe()->only(['email', 'password']))) {
+      $request->session()->regenerate();
+      return back()->with('success', 'Logado com sucesso');
+    } else {
+      return back()->with('error', 'Erro ao realizar o login!')->withInput($request->only('email'));
+    }
+
   }
 
   /**
@@ -60,8 +69,12 @@ class LoginController extends Controller
   /**
    * Remove the specified resource from storage.
    */
-  public function destroy(string $id)
+  public function destroy()
   {
-    //
+
+    Auth::logout();
+
+    return back()->with('success', 'Deslogado com sucesso');
+
   }
 }

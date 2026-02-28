@@ -18,4 +18,5 @@ Route::resource('login', LoginController::class)->only([
   'index',
   'store'
 ]);
+Route::get('/logout', [LoginController::class, 'destroy'])->name('login.destroy');
 Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
